@@ -33,18 +33,21 @@ class Vec {
 			for (unsigned int i(0); i < N; ++i) {
 				data_[i] += other.data_[i];
 			}
+			return *this;
 		}
 
 		Vec<N> operator-=(Vec<N> const& other) {
 			for (unsigned int i(0); i < N; ++i) {
 				data_[i] -= other.data_[i];
 			}
+			return *this;
 		}
 
 		Vec<N> operator*=(double val) {
 			for (unsigned int i(0); i < N; ++i) {
 				data_[i] *= val;
 			}
+			return *this;
 		}
 
 		double x() const { 
@@ -66,19 +69,19 @@ class Vec {
 
 		void set_x(double val) {
 			static_assert(N >= 1);
-			data_[0];
+			data_[0] = val;
 		}
 		void set_y(double val) {
 			static_assert(N >= 2);
-			data_[1];
+			data_[1] = val;
 		}
 		void set_z(double val) {
 			static_assert(N >= 3);
-			data_[2];
+			data_[2] = val;
 		}
 		void set_w(double val) {
 			static_assert(N >= 4);
-			data_[3];
+			data_[3] = val;
 		}
 
 		Vec<3> operator^(Vec<3> const& other) {
@@ -96,7 +99,10 @@ class Vec {
 
 		Vec<3> to_3D() const {
 			static_assert(N == 4);
-			return Vec<3>({x()/w(), y()/w(), z()/w()});
+			if (w() != 0)
+				return Vec<3>({x()/w(), y()/w(), z()/w()});
+			else
+				return Vec<3>({x(), y(), z()});
 		}
 
 	private:

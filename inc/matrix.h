@@ -1,6 +1,7 @@
 #pragma once
 
 #include "math.h"
+#include <ostream>
 
 template <unsigned int N, unsigned int M>
 class Matrix {
@@ -26,18 +27,62 @@ class Matrix {
 			static_assert(N == M);
 			return make_scalar(1.0);
 		}
-		static Matrix<4, 4> make_perspective() {
+		static Matrix<4, 4> make_perspective(
+				double near, double far, double fov, double aspect) {
 			static_assert(N == M && N == 4);
+			double t = 1.0 / tan(fov / 2.0);
+			Matrix<4, 4> m;
+			m[0][0] = aspect * t;
+			m[1][1] = t;
+			m[2][2] = far / (far - near);
+			m[2][3] = -near * far / (far - near);
+			m[3][2] = 1;
+			m[3][3] = 0;
+			return m;
 		}
+		static Matrix<4, 4> make_translation(
+				double x, double y, double z) {
+			static_assert(N == M && N == 4);
+			Matrix<4, 4> m = make_identity();
+			m[0][3] = x;
+			m[1][3] = y;
+			m[2][3] = z;
+			return m;
+		}
+		static Matrix<4, 4> make_rotation_x(double a) {
+			static_assert(N == M && N == 4);
+			Matrix<4, 4> m = make_identity();
+			m[1][1] = cos(a);
+			m[1][2] = -sin(a);
+			m[2][1] = sin(a);
+			m[2][2] = cos(a);
+			return m;
+		}
+		static Matrix<4, 4> make_rotation_y(double a) {
+			static_assert(N == M && N == 4);
+			Matrix<4, 4> m = make_identity();
+			m[0][0] = cos(a);
+			m[0][2] = sin(a);
+			m[2][0] = -sin(a);
+			m[2][2] = cos(a);
+			return m;
+		}
+		static Matrix<4, 4> make_rotation_z(double a) {
+			static_assert(N == M && N == 4);
+			Matrix<4, 4> m = make_identity();
+			m[0][0] = cos(a);
+			m[0][1] = -sin(a);
+			m[1][0] = sin(a);
+			m[1][1] = cos(a);
+			return m;
+		}
+		
 
 		// This is the "modern art" way of programming
 		class LineView {
 			public:
 				LineView(Matrix<N, M> *m, unsigned int l):
 					matrix_(m), line_(l) {}
-				double operator[](unsigned int j) const {
-					return matrix_->data_[line_][j];
-				}
 				double& operator[](unsigned int j) {
 					return matrix_->data_[line_][j];
 				}
@@ -45,8 +90,19 @@ class Matrix {
 				Matrix<N, M> *matrix_;
 				unsigned int line_;
 		};
-		LineView const operator[](unsigned int i) const {
-			return LineView(this, i);
+		class ConstLineView {
+			public:
+				ConstLineView(Matrix<N, M> const *m, unsigned int l):
+					matrix_(m), line_(l) {}
+				double operator[](unsigned int j) const {
+					return matrix_->data_[line_][j];
+				}
+			private:
+				Matrix<N, M> const *matrix_;
+				unsigned int line_;
+		};
+		ConstLineView operator[](unsigned int i) const {
+			return ConstLineView(this, i);
 		}
 		LineView operator[](unsigned int i) {
 			return LineView(this, i);
@@ -84,3 +140,16 @@ typedef Matrix<2, 2> Matrix2D;
 typedef Matrix<3, 3> Matrix3D;
 typedef Matrix<4, 4> Matrix4D;
 
+template<unsigned int N, unsigned int M>
+std::ostream &operator<<(std::ostream& os, Matrix<N, M> const& mat) {
+	for (unsigned int i(0); i < N; ++i) {
+		for (unsigned int j(0); j < M; ++j) {
+			os << mat[i][j];
+			if (j < M - 1) {
+				os << " ";
+			}
+		}
+		os << "\n";
+	}
+	return os;
+}
