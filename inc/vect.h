@@ -64,19 +64,19 @@ class Vec {
 			return data_[3];
 		}
 
-		void setX(double val) {
+		void set_x(double val) {
 			static_assert(N >= 1);
 			data_[0];
 		}
-		void setY(double val) {
+		void set_y(double val) {
 			static_assert(N >= 2);
 			data_[1];
 		}
-		void setZ(double val) {
+		void set_z(double val) {
 			static_assert(N >= 3);
 			data_[2];
 		}
-		void setW(double val) {
+		void set_w(double val) {
 			static_assert(N >= 4);
 			data_[3];
 		}
@@ -89,12 +89,12 @@ class Vec {
 					x()*other.y() - y()*other.x()});
 		}
 
-		Vec<4> to4D() const {
+		Vec<4> to_4D() const {
 			static_assert(N == 3);
 			return Vec<4>({x(), y(), z(), 1.0});
 		}
 
-		Vec<3> to3D() const {
+		Vec<3> to_3D() const {
 			static_assert(N == 4);
 			return Vec<3>({x()/w(), y()/w(), z()/w()});
 		}

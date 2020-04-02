@@ -7,7 +7,7 @@ CFLAGS = -I./$(INCDIR)
 LIBS = -lncurses
 
 
-_HEADERS = vect.h
+_HEADERS = vect.h matrix.h
 HEADERS = $(patsubst %,$(INCDIR)/%,$(_HEADERS))
 
 _OBJECTS = main.o

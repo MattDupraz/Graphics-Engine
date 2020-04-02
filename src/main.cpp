@@ -2,11 +2,15 @@
 #include <iostream>
 
 #include "vect.h"
+#include "matrix.h"
 
 int main() {
 	using namespace std;
 
+	Matrix3D I = Matrix3D::make_identity();
+	I[1][2] = 2;
 	Vec3D v({1, 2, 3});
+	cout << (I * v) << endl;
 
 	/*initscr();
 	cbreak();
