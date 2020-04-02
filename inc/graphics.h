@@ -15,8 +15,11 @@ class GraphicsEngine {
 		void init();
 		void start();
 		void draw();
-		void drawLine(int x1, int y1, int x2, int y2, char c);
-		void drawPoint(int x, int y, char c);
+		void drawLine(int x1, int y1, int x2, int y2, short c);
+		void drawPoint(int x, int y, short c);
+
+		void clearBuffer();
+		void renderBuffer();
 
 		void eventResize();
 		void updatePerspective();
@@ -24,6 +27,11 @@ class GraphicsEngine {
 	private:
 		int width;
 		int height;
+
+		int drawWidth;
+		int drawHeight;
+
+		std::vector<std::vector<short>> buffer;
 
 		Matrix4D perspective;
 		Matrix4D view;

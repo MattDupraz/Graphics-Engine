@@ -4,7 +4,7 @@ SRCDIR = src
 
 CC = g++
 CFLAGS = -I./$(INCDIR)
-LIBS = -lncurses
+LIBS = -lncursesw
 
 
 _HEADERS = vect.h matrix.h graphics.h mesh.h

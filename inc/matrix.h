@@ -2,6 +2,7 @@
 
 #include "math.h"
 #include <ostream>
+#include <array>
 
 template <unsigned int N, unsigned int M>
 class Matrix {
@@ -76,38 +77,13 @@ class Matrix {
 			m[1][1] = cos(a);
 			return m;
 		}
-		
 
-		// This is the "modern art" way of programming
-		class LineView {
-			public:
-				LineView(Matrix<N, M> *m, unsigned int l):
-					matrix_(m), line_(l) {}
-				double& operator[](unsigned int j) {
-					return matrix_->data_[line_][j];
-				}
-			private:
-				Matrix<N, M> *matrix_;
-				unsigned int line_;
-		};
-		class ConstLineView {
-			public:
-				ConstLineView(Matrix<N, M> const *m, unsigned int l):
-					matrix_(m), line_(l) {}
-				double operator[](unsigned int j) const {
-					return matrix_->data_[line_][j];
-				}
-			private:
-				Matrix<N, M> const *matrix_;
-				unsigned int line_;
-		};
-		ConstLineView operator[](unsigned int i) const {
-			return ConstLineView(this, i);
+		std::array<double, M> const& operator[](unsigned int i) const {
+			return data_[i];
 		}
-		LineView operator[](unsigned int i) {
-			return LineView(this, i);
+		std::array<double, M>& operator[](unsigned int i) {
+			return data_[i];
 		}
-		// I don't care if you feel violated
 
 		template<unsigned int L>
 		Matrix<N, L> operator*(Matrix<M, L> const& other) {
@@ -133,7 +109,7 @@ class Matrix {
 		}
 
 	private:
-		double data_[N][M];
+		std::array<std::array<double, M>, N> data_;
 };
 
 typedef Matrix<2, 2> Matrix2D;

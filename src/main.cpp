@@ -1,4 +1,5 @@
 #include <signal.h>
+#include <locale.h>
 
 #include "graphics.h"
 #include "mesh.h"
@@ -14,6 +15,7 @@ void handleResize(int sig) {
 }
 
 int main() {
+	setlocale(LC_ALL, "");
 	signal(SIGWINCH, handleResize);
 
 	std::cout << Matrix4D::make_rotation_x(3.14/3.0) << std::endl;
