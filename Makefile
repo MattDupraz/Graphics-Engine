@@ -10,7 +10,7 @@ LIBS = -lncursesw
 _HEADERS = vect.h matrix.h graphics.h mesh.h
 HEADERS = $(patsubst %,$(INCDIR)/%,$(_HEADERS))
 
-_OBJECTS = main.o graphics.o
+_OBJECTS = main.o mesh.o graphics.o
 OBJECTS = $(patsubst %,$(OBJDIR)/%,$(_OBJECTS))
 
 TARGET = test

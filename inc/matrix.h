@@ -4,6 +4,8 @@
 #include <ostream>
 #include <array>
 
+#include "vect.h"
+
 template <unsigned int N, unsigned int M>
 class Matrix {
 	public:

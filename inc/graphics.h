@@ -15,8 +15,13 @@ class GraphicsEngine {
 		void init();
 		void start();
 		void draw();
-		void drawLine(int x1, int y1, int x2, int y2, short c);
+		void drawLine(Vec2D p1, Vec2D p2, short c);
 		void drawPoint(int x, int y, short c);
+		void fillSimplex(Simplex const& s, short c);
+		void rasterize(std::vector<Simplex> const& simplices);
+		void fillFlatTopTriangle(Vec2D p1, Vec2D p2, Vec2D p3, short c);
+		void fillFlatBottomTriangle(Vec2D p1, Vec2D p2, Vec2D p3, short c);
+
 
 		void clearBuffer();
 		void renderBuffer();
