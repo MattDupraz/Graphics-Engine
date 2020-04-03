@@ -86,23 +86,13 @@ class Matrix {
 		}
 
 		template<unsigned int L>
-		Matrix<N, L> operator*(Matrix<M, L> const& other) {
+		Matrix<N, L> operator*(Matrix<M, L> const& other) const {
 			Matrix<N, L> result;
 			for (unsigned int i(0); i < N; ++i) {
 				for (unsigned int j(0); j < L; ++j) {
 					for (unsigned int k(0); k < M; ++k) {
 						result[i][j] += data_[i][k] * other.data_[k][j];
 					}
-				}
-			}
-			return result;
-		}
-
-		Vec<N> operator*(Vec<M> const& vec) {
-			Vec<N> result;
-			for (unsigned int i(0); i < N; ++i) {
-				for (unsigned int j(0); j < M; ++j) {
-					result[i] += vec[j] * data_[i][j];
 				}
 			}
 			return result;
@@ -115,6 +105,21 @@ class Matrix {
 typedef Matrix<2, 2> Matrix2D;
 typedef Matrix<3, 3> Matrix3D;
 typedef Matrix<4, 4> Matrix4D;
+
+template<unsigned int N, unsigned int M>
+Vec<N> operator*(Matrix<N, M> const& m, Vec<M> const& vec) {
+	Vec<N> result;
+	for (unsigned int i(0); i < N; ++i) {
+		for (unsigned int j(0); j < M; ++j) {
+			result[i] += vec[j] * m[i][j];
+		}
+	}
+	return result;
+}
+
+inline Vec3D operator*(Matrix4D const& m, Vec3D const& v) {
+	return (m * v.to_4D()).to_3D();
+}
 
 template<unsigned int N, unsigned int M>
 std::ostream &operator<<(std::ostream& os, Matrix<N, M> const& mat) {

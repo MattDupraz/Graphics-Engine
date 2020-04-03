@@ -54,18 +54,6 @@ void GraphicsEngine::init()
 }
 
 void GraphicsEngine::start() {
-	for (Face& face: mesh.faces) {
-		Matrix4D transform = perspective * view;
-		std::cout << perspective * view * (*face.vertices[0]) << std::endl;
-		Vec3D pos[3] = {
-			(transform * *face.vertices[0]).to_3D(),
-			(transform * *face.vertices[1]).to_3D(),
-			(transform * *face.vertices[2]).to_3D(),
-		};
-		std::cout << pos[0] << " ||| " << pos[1] << " ||| " << pos[2] << std::endl;
-	}
-	//while (true) {}
-	
 	while(true) {
 		erase();
 		clearBuffer();
@@ -107,32 +95,30 @@ void GraphicsEngine::draw() {
 	theta += 0.001;
 	static double phi = 0;
 	phi += 0.00037;
-	Matrix4D transform = perspective * view;
-	transform = transform * Matrix4D::make_rotation_y(theta);
-	transform = transform * Matrix4D::make_rotation_x(phi);
-	for (Face& face: mesh.faces) {
+	Matrix4D transform_matrix = perspective * view;
+	transform_matrix = transform_matrix * Matrix4D::make_rotation_y(theta);
+	transform_matrix = transform_matrix * Matrix4D::make_rotation_x(phi);
 
-		Vec3D pos[3] = {
-			(transform * *face.vertices[0]).to_3D(),
-			(transform * *face.vertices[1]).to_3D(),
-			(transform * *face.vertices[2]).to_3D(),
-		};
+	Mesh transformed_mesh = mesh.transform(transform_matrix);
 
-		for (int i(0); i < 3; ++i) {
-			pos[i] += Vec3D({1, 1, 0});
-			pos[i].set_x(pos[i].x() * double(drawWidth)/2.0);
-			pos[i].set_y(pos[i].y() * double(drawHeight)/2.0);
-		}
-		// 2597 - 259F
-		//cchar_t c { A_NORMAL, L'\u2588'};
-		short c(1);
-		if (((pos[1] - pos[0]) ^ (pos[2] - pos[0])).z() < 0.0) {
-			drawLine(int(pos[0].x()), int(pos[0].y()),
-					int(pos[1].x()), int(pos[1].y()), c);
-			drawLine(int(pos[1].x()), int(pos[1].y()),
-					int(pos[2].x()), int(pos[2].y()), c);
-			drawLine(int(pos[2].x()), int(pos[2].y()),
-					int(pos[0].x()), int(pos[0].y()), c);
+	for (unsigned int i(0); i < transformed_mesh.n_faces(); ++i) {
+		Simplex s = transformed_mesh.get_simplex(i);
+
+		if (s.normal().z() < 0.0) {
+
+			for (int i(0); i < 3; ++i) {
+				s.pos[i] += Vec3D({1, 1, 0});
+				s.pos[i][0] *= double(drawWidth)/2.0;
+				s.pos[i][1] *= double(drawHeight)/2.0;
+			}
+
+			short c(1);
+			drawLine(int(s.pos[0].x()), int(s.pos[0].y()),
+					int(s.pos[1].x()), int(s.pos[1].y()), c);
+			drawLine(int(s.pos[1].x()), int(s.pos[1].y()),
+					int(s.pos[2].x()), int(s.pos[2].y()), c);
+			drawLine(int(s.pos[2].x()), int(s.pos[2].y()),
+					int(s.pos[0].x()), int(s.pos[0].y()), c);
 		}
 	}
 }
