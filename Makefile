@@ -4,13 +4,13 @@ SRCDIR = src
 
 CC = g++
 CFLAGS = -I./$(INCDIR)
-LIBS = -lncursesw
+LIBS = -lncursesw -lsfml-graphics -lsfml-window -lsfml-system
 
 
-_HEADERS = vect.h matrix.h graphics.h mesh.h
+_HEADERS = vect.h matrix.h renderer.h sfml_raster.h
 HEADERS = $(patsubst %,$(INCDIR)/%,$(_HEADERS))
 
-_OBJECTS = main.o mesh.o graphics.o
+_OBJECTS = main.o renderer.o sfml_app.o sfml_raster.o
 OBJECTS = $(patsubst %,$(OBJDIR)/%,$(_OBJECTS))
 
 TARGET = test

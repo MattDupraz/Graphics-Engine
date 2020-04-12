@@ -7,34 +7,35 @@
 #include "vect.h"
 
 template <unsigned int N, unsigned int M>
-class Matrix {
+class matrix {
 	public:
-		Matrix():data_{{0}} {}
-		Matrix(double (&&data)[N][M]): Matrix(data) {}
-		Matrix(double (&data)[N][M]) {
+		matrix():data_{{0}} {}
+		matrix(float (&&data)[N][M]): matrix(data) {}
+		matrix(float (&data)[N][M]) {
 			for (unsigned int i(0); i < N; ++i) {
 				for (unsigned int j(0); j < N; ++j) {
 					data_[i][j] = data[i][j];
 				}
 			}
 		}
-		static Matrix<N, N> make_scalar(double d) {
+
+		static matrix<N, N> scalar(float d) {
 			static_assert(N == M);
-			Matrix<N, N> m;
+			matrix<N, N> m;
 			for (unsigned int i(0); i < N; ++i) {
 				m.data_[i][i] = d;
 			}
 			return m;
 		}
-		static Matrix<N, N> make_identity() {
+		static matrix<N, N> identity() {
 			static_assert(N == M);
-			return make_scalar(1.0);
+			return scalar(1.0);
 		}
-		static Matrix<4, 4> make_perspective(
-				double near, double far, double fov, double aspect) {
+		static matrix<4, 4> perspective(
+				float near, float far, float fov, float aspect) {
 			static_assert(N == M && N == 4);
-			double t = 1.0 / tan(fov / 2.0);
-			Matrix<4, 4> m;
+			float t = 1.0 / tan(fov / 2.0);
+			matrix<4, 4> m;
 			m[0][0] = aspect * t;
 			m[1][1] = t;
 			m[2][2] = far / (far - near);
@@ -43,36 +44,36 @@ class Matrix {
 			m[3][3] = 0;
 			return m;
 		}
-		static Matrix<4, 4> make_translation(
-				double x, double y, double z) {
+		static matrix<4, 4> translation(
+				float x, float y, float z) {
 			static_assert(N == M && N == 4);
-			Matrix<4, 4> m = make_identity();
+			matrix<4, 4> m = identity();
 			m[0][3] = x;
 			m[1][3] = y;
 			m[2][3] = z;
 			return m;
 		}
-		static Matrix<4, 4> make_rotation_x(double a) {
+		static matrix<4, 4> rotation_x(float a) {
 			static_assert(N == M && N == 4);
-			Matrix<4, 4> m = make_identity();
+			matrix<4, 4> m = identity();
 			m[1][1] = cos(a);
 			m[1][2] = -sin(a);
 			m[2][1] = sin(a);
 			m[2][2] = cos(a);
 			return m;
 		}
-		static Matrix<4, 4> make_rotation_y(double a) {
+		static matrix<4, 4> rotation_y(float a) {
 			static_assert(N == M && N == 4);
-			Matrix<4, 4> m = make_identity();
+			matrix<4, 4> m = identity();
 			m[0][0] = cos(a);
 			m[0][2] = sin(a);
 			m[2][0] = -sin(a);
 			m[2][2] = cos(a);
 			return m;
 		}
-		static Matrix<4, 4> make_rotation_z(double a) {
+		static matrix<4, 4> rotation_z(float a) {
 			static_assert(N == M && N == 4);
-			Matrix<4, 4> m = make_identity();
+			matrix<4, 4> m = identity();
 			m[0][0] = cos(a);
 			m[0][1] = -sin(a);
 			m[1][0] = sin(a);
@@ -80,16 +81,16 @@ class Matrix {
 			return m;
 		}
 
-		std::array<double, M> const& operator[](unsigned int i) const {
+		std::array<float, M> const& operator[](unsigned int i) const {
 			return data_[i];
 		}
-		std::array<double, M>& operator[](unsigned int i) {
+		std::array<float, M>& operator[](unsigned int i) {
 			return data_[i];
 		}
 
 		template<unsigned int L>
-		Matrix<N, L> operator*(Matrix<M, L> const& other) const {
-			Matrix<N, L> result;
+		matrix<N, L> operator*(matrix<M, L> const& other) const {
+			matrix<N, L> result;
 			for (unsigned int i(0); i < N; ++i) {
 				for (unsigned int j(0); j < L; ++j) {
 					for (unsigned int k(0); k < M; ++k) {
@@ -101,30 +102,26 @@ class Matrix {
 		}
 
 	private:
-		std::array<std::array<double, M>, N> data_;
+		std::array<std::array<float, M>, N> data_;
 };
 
-typedef Matrix<2, 2> Matrix2D;
-typedef Matrix<3, 3> Matrix3D;
-typedef Matrix<4, 4> Matrix4D;
+typedef matrix<2, 2> matrix2f;
+typedef matrix<3, 3> matrix3f;
+typedef matrix<4, 4> matrix4f;
 
 template<unsigned int N, unsigned int M>
-Vec<N> operator*(Matrix<N, M> const& m, Vec<M> const& vec) {
-	Vec<N> result;
+vec<N> operator*(matrix<N, M> const& m, vec<M> const& v) {
+	vec<N> result {0};
 	for (unsigned int i(0); i < N; ++i) {
 		for (unsigned int j(0); j < M; ++j) {
-			result[i] += vec[j] * m[i][j];
+			result[i] += v[j] * m[i][j];
 		}
 	}
 	return result;
 }
 
-inline Vec3D operator*(Matrix4D const& m, Vec3D const& v) {
-	return (m * v.to_4D()).to_3D();
-}
-
 template<unsigned int N, unsigned int M>
-std::ostream &operator<<(std::ostream& os, Matrix<N, M> const& mat) {
+std::ostream &operator<<(std::ostream& os, matrix<N, M> const& mat) {
 	for (unsigned int i(0); i < N; ++i) {
 		for (unsigned int j(0); j < M; ++j) {
 			os << mat[i][j];
