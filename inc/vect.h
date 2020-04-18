@@ -8,7 +8,7 @@ struct vec {
 	float coords[N];
 
 	float norm2() const {
-		float sum;
+		float sum(0);
 		for (float d: coords) {
 			sum += pow(d, 2);
 		}
